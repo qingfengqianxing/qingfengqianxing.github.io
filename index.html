@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<head>
+  <meta charset="UTF-8">
+<title>CSS3立体图片切换效果欣赏</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-1.11.1.js"></script>
+  
+
+</head>
+<body>
+ <div class="wrap">
+    <div class="box">
+    	<img src="images/1.jpg" alt="图片1"/>
+      <img src="images/2.jpg" alt="图片2"/>
+      <img src="images/3.jpg" alt="图片3"/>
+      <img src="images/4.jpg" alt="图片4"/>
+    </div>
+  </div>  
+</body>
+  <script>
+  
+  //Initiliaze
+  var box, pic, className, _this, newSub;
+  
+  box  = $('.box');
+  pic = box.children('img');
+  
+  // 为每个匹配元素规定运行的函数
+  pic.each(function(index) {
+
+    className  = 'pic-' + index;
+    
+    $(this).addClass(className).attr('data-order', index);
+    
+  });
+  
+  //  监听事件处理，在事件触发是运行函数
+  pic.bind('click', function() {
+    
+    _this  = $(this);
+
+    _this.addClass('show');
+    
+    // 动画结束后添加新的下标序号赋给点击的
+    pic.bind('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function() { 
+      _this.removeClass().addClass('pic-0').attr('data-order', '0');
+    
+    });
+
+    // 移动点击之外的模块
+   setTimeout(function () {    
+      other = parseInt(_this.attr('data-order')) - 1;
+
+      for(var i = other; i >= 0; i--) {
+      
+        // 匹配元素集合缩减为匹配指定选择器的元素    重新排序和定位其余的模块
+        movedPic = pic.filter('[data-order=' + i + ']');
+    
+        newSub  = parseInt(movedPic.attr('data-order')) + 1;
+  
+        className = 'pic-' + newSub;
+        
+        // 移动未点击的模块
+        movedPic.removeClass().addClass('transition ' + className).attr('data-order', newSub);
+        
+        // 过度结束之后就移除绑定的过度的类名
+        pic.bind('transitionend webkitTransitionEnd MSTransitionEnd oTransitionEnd', function() { 
+          pic.removeClass('transition');
+        });
+      }  
+    }, 500);
+  });
+
+  </script>
+</html>
